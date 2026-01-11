@@ -56,21 +56,6 @@ if ($match_result) {
     }
 }
 
-// Calculate profile completion percentage
-$completion_fields = [
-    'full_name' => !empty($profile['full_name']),
-    'gender' => !empty($profile['gender']),
-    'age' => !empty($profile['age']) && $profile['age'] > 0,
-    'religion' => !empty($profile['religion']),
-    'education' => !empty($profile['education']),
-    'location' => !empty($profile['location']),
-    'profile_photo' => !empty($profile['profile_photo']) && $profile['profile_photo'] != 'default.jpg',
-    'bio' => !empty($profile['bio'])
-];
-
-$filled_fields = array_sum($completion_fields);
-$total_fields = count($completion_fields);
-$completion_percentage = $total_fields > 0 ? round(($filled_fields / $total_fields) * 100) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -84,11 +69,11 @@ $completion_percentage = $total_fields > 0 ? round(($filled_fields / $total_fiel
     
     <style>
         :root {
-            --primary: #9D2235;
-            --secondary: #C9A227;
-            --bg: #FAF7F2;
-            --text: #2B2B2B;
-            --border: #E5E5E5;
+            --primary: '#9D2235';  
+            --secondary: '#C9A227';  
+            --bg: '#FAF7F2';            
+            --text: '#2B2B2B';          
+            --border: '#E5E5E5';       
         }
         
         body {
@@ -198,17 +183,7 @@ $completion_percentage = $total_fields > 0 ? round(($filled_fields / $total_fiel
                     </div>
                 </div>
                 
-                <!-- Profile Completion -->
-                <div class="mb-6">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-700">Profile Strength</span>
-                        <span class="text-sm font-bold text-red-600"><?php echo $completion_percentage; ?>%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="progress-bar rounded-full" style="width: <?php echo $completion_percentage; ?>%"></div>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">Complete your profile for better matches</p>
-                </div>
+              
                 
                 <!-- Quick Info -->
                 <div class="space-y-3 mb-6">

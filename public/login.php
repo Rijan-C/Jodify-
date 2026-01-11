@@ -2,44 +2,46 @@
 session_start();
 include("config/db.php");
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+$error = '';
 
-    $email = trim($_POST["email"]);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $email = mysqli_real_escape_string($conn, trim($_POST["email"]));
     $password = $_POST["password"];
 
-    // Prepared statement (SECURE)
-    $sql = "SELECT user_id, email, password_hash FROM users WHERE email = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $email);
-    mysqli_stmt_execute($stmt);
+    // Simple SQL query without prepared statements
+    $sql = "SELECT user_id, email, password_hash FROM users WHERE email = '$email'";
+    $result = mysqli_query($conn, $sql);
 
-    $result = mysqli_stmt_get_result($stmt);
-
-    if (mysqli_num_rows($result) === 1) {
-
+    if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
 
         // Verify password
         if (password_verify($password, $user["password_hash"])) {
-
-            // ✅ Store session values
+            // Set session variables
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['email'] = $user['email'];
-
-            header("Location: /jodify/profile/create.php");
-            exit;
-
-            exit;
             
+            // Check if user already has a profile
+            $profile_sql = "SELECT id FROM profiles WHERE user_id = '{$user['user_id']}'";
+            $profile_result = mysqli_query($conn, $profile_sql);
+            
+            if (mysqli_num_rows($profile_result) > 0) {
+                // User has profile, redirect to dashboard
+                header("Location: /jodify/public/dashboard.php");
+            } else {
+                // No profile yet, redirect to create profile
+                header("Location: /jodify/profile/create.php");
+            }
+            exit();
         } else {
-            echo "<script>alert('Invalid email or password!');</script>";
+            $error = "Invalid email or password!";
         }
-
     } else {
-        echo "<script>alert('Invalid email or password!');</script>";
+        $error = "Invalid email or password!";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

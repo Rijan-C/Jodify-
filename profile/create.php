@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($error)) {
                         class="bg-nepal-primary text-white px-8 py-3 rounded-full font-medium hover:bg-nepal-primary/90 transition hover:shadow-lg">
                         Save Profile
                     </button>
-                    <a href="dashboard.php"
+                    <a href="../public/dashboard.php"
                         class="ml-4 px-8 py-3 border border-nepal-border text-nepal-text rounded-full font-medium hover:bg-nepal-bg transition">
                         Cancel
                     </a>

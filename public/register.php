@@ -2,44 +2,36 @@
 include("config/db.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    $name     = trim($_POST["name"]);
-    $email    = trim($_POST["email"]);
+    $name = trim($_POST["name"]);
+    $email = trim($_POST["email"]);
     $password = $_POST["password"];
-
-    // Hash password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-    // 1️⃣ Check if email already exists (Prepared Statement)
-    $checkSql = "SELECT user_id FROM users WHERE email = ?";
-    $checkStmt = mysqli_prepare($conn, $checkSql);
-    mysqli_stmt_bind_param($checkStmt, "s", $email);
-    mysqli_stmt_execute($checkStmt);
-    mysqli_stmt_store_result($checkStmt);
-
-    if (mysqli_stmt_num_rows($checkStmt) > 0) {
-        echo "<script>alert('Email already registered!');</script>";
+    
+    // Validate required fields
+    if (empty($name) || empty($email) || empty($password)) {
+        echo "<script>alert('All fields are required!');</script>";
     } else {
-
-        // 2️⃣ Insert new user
-        $insertSql = "INSERT INTO users (full_name, email, password_hash)
-                      VALUES (?, ?, ?)";
-
-        $insertStmt = mysqli_prepare($conn, $insertSql);
-        mysqli_stmt_bind_param(
-            $insertStmt,
-            "sss",
-            $name,
-            $email,
-            $hashedPassword
-        );
-
-        if (mysqli_stmt_execute($insertStmt)) {
-            echo "<script>alert('Registration successful! Please login.');</script>";
-            header("Location: login.php");
-            exit;
+        // Hash password
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        
+        $safeEmail = mysqli_real_escape_string($conn, $email);
+        $checkSql = "SELECT user_id FROM users WHERE email = '$safeEmail'";
+        $result = mysqli_query($conn, $checkSql);
+        
+        if (mysqli_num_rows($result) > 0) {
+            echo "<script>alert('Email already registered!');</script>";
         } else {
-            echo "<script>alert('Registration failed. Try again.');</script>";
+  
+            $safeName = mysqli_real_escape_string($conn, $name);
+            $insertSql = "INSERT INTO users (full_name, email, password_hash) 
+                          VALUES ('$safeName', '$safeEmail', '$hashedPassword')";
+            
+            if (mysqli_query($conn, $insertSql)) {
+                echo "<script>alert('Registration successful! Please login.');</script>";
+                header("Location: login.php");
+                exit();
+            } else {
+                echo "<script>alert('Registration failed: " . mysqli_error($conn) . "');</script>";
+            }
         }
     }
 }
