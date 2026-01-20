@@ -75,11 +75,8 @@ $me = mysqli_fetch_assoc($me_result);
                     <a href="/jodify/public/user/dashboard.php" class="flex items-center gap-3 p-4 text-slate-500 hover:text-brand-dark font-semibold transition">
                         <i class='bx bx-grid-alt text-xl'></i> Dashboard
                     </a>
-                    <a href="/jodify/public/discover.php" class="flex items-center gap-3 p-4 rounded-2xl font-bold transition">
+                    <a href="/jodify/public/discover.php" class="flex items-center gap-3 p-4 bg-brand-accent/5 text-brand-accent rounded-2xl font-bold transition">
                         <i class='bx bx-search text-xl'></i> Discover
-                    </a>
-                    <a href="#" class="flex items-center gap-3 p-4 bg-brand-accent/5 text-brand-accent rounded-2xl font-bold transition">
-                        <i class='bx bx-search text-xl'></i> My - Profile
                     </a>
                     
                 </nav>
